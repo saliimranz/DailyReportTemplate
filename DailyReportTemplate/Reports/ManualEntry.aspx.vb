@@ -40,11 +40,11 @@ Public Partial Class ManualEntry
 
         For Each secGroup In sections
             Dim sectionPanel As New Panel With {.CssClass = "section-card"}
-            sectionPanel.Controls.Add(New LiteralControl($"<h2 class='section-title'>{FriendlySection(secGroup.Key)}</h2>"))
+            sectionPanel.Controls.Add(New LiteralControl("<h2 class='section-title'>" & FriendlySection(secGroup.Key) & "</h2>"))
 
             Dim subGroups = secGroup.OrderBy(Function(f) f.SortSubSection).GroupBy(Function(f) f.SubSection)
             For Each subGroup In subGroups
-                sectionPanel.Controls.Add(New LiteralControl($"<h3 class='subsection-title'>{FriendlySubSection(secGroup.Key, subGroup.Key)}</h3>"))
+                sectionPanel.Controls.Add(New LiteralControl("<h3 class='subsection-title'>" & FriendlySubSection(secGroup.Key, subGroup.Key) & "</h3>"))
 
                 Dim itemGroups = subGroup.OrderBy(Function(f) f.SortItem).GroupBy(Function(f) f.Item)
                 For Each itemGroup In itemGroups
@@ -60,16 +60,16 @@ Public Partial Class ManualEntry
         Dim wrapper As New Panel With {.CssClass = "item-row"}
         Dim labelText = fieldsForItem.First().DisplayLabel
         Dim unitText = fieldsForItem.First().Unit
-        Dim unitMarkup = If(String.IsNullOrWhiteSpace(unitText), String.Empty, $"<span class='unit'>{unitText}</span>")
-        wrapper.Controls.Add(New LiteralControl($"<div class='item-label'>{labelText}{unitMarkup}</div>"))
+        Dim unitMarkup = If(String.IsNullOrWhiteSpace(unitText), String.Empty, "<span class='unit'>" & unitText & "</span>")
+        wrapper.Controls.Add(New LiteralControl("<div class='item-label'>" & labelText & unitMarkup & "</div>"))
 
         Dim inputsWrap As New Panel With {.CssClass = "item-inputs"}
         For Each field In fieldsForItem.OrderBy(Function(f) f.SortMeasure)
             Dim inputWrap As New Panel With {.CssClass = "input-group"}
-            inputWrap.Controls.Add(New LiteralControl($"<label class='input-label'>{FriendlyMeasure(field)}</label>"))
+            inputWrap.Controls.Add(New LiteralControl("<label class='input-label'>" & FriendlyMeasure(field) & "</label>"))
 
             Dim tb As New TextBox With {
-                .ID = $"fld_{field.Key}",
+                .ID = "fld_" & field.Key,
                 .CssClass = If(field.InputType = "number", "input-box num", "input-box"),
                 .ClientIDMode = ClientIDMode.Static
             }
@@ -92,9 +92,9 @@ Public Partial Class ManualEntry
         Dim dict = repo.GetFactsAsDictionary(reportDate)
         ApplyValues(dict)
         If dict.Count = 0 Then
-            lblStatus.Text = $"No saved values for {reportDate:yyyy-MM-dd}."
+            lblStatus.Text = "No saved values for " & reportDate.ToString("yyyy-MM-dd") & "."
         Else
-            lblStatus.Text = $"Loaded {dict.Count} values for {reportDate:yyyy-MM-dd}."
+            lblStatus.Text = "Loaded " & dict.Count.ToString(CultureInfo.InvariantCulture) & " values for " & reportDate.ToString("yyyy-MM-dd") & "."
         End If
     End Sub
 
@@ -132,9 +132,9 @@ Public Partial Class ManualEntry
         Dim dict = repo.GetFactsAsDictionary(prev)
         ApplyValues(dict)
         If dict.Count = 0 Then
-            lblStatus.Text = $"No saved values for {prev:yyyy-MM-dd}."
+            lblStatus.Text = "No saved values for " & prev.ToString("yyyy-MM-dd") & "."
         Else
-            lblStatus.Text = $"Loaded {dict.Count} values from {prev:yyyy-MM-dd}. Click Save to persist for {SelectedDate():yyyy-MM-dd}."
+            lblStatus.Text = "Loaded " & dict.Count.ToString(CultureInfo.InvariantCulture) & " values from " & prev.ToString("yyyy-MM-dd") & ". Click Save to persist for " & SelectedDate().ToString("yyyy-MM-dd") & "."
         End If
     End Sub
 
@@ -177,7 +177,7 @@ Public Partial Class ManualEntry
                     If Decimal.TryParse(trimmed, NumberStyles.Any, CultureInfo.InvariantCulture, dec) Then
                         dto.ValueNum = dec
                     Else
-                        errors.Add($"{FriendlySection(field.Section)} / {FriendlySubSection(field.Section, field.SubSection)} / {field.DisplayLabel} ({FriendlyMeasure(field)}) must be numeric.")
+                        errors.Add(FriendlySection(field.Section) & " / " & FriendlySubSection(field.Section, field.SubSection) & " / " & field.DisplayLabel & " (" & FriendlyMeasure(field) & ") must be numeric.")
                     End If
                 End If
             Else
@@ -198,11 +198,11 @@ Public Partial Class ManualEntry
                 Dim dt = repo.GetFacts(selected)
                 Dim templatePath = Server.MapPath("~/Templates/DailyReportTemplate.xlsx")
                 Dim bytes = TemplateExporter.ExportFromTemplate(templatePath, dt, selected)
-                PushDownload(bytes, $"DailyReport_{selected:yyyyMMdd}.xlsx")
+                PushDownload(bytes, "DailyReport_" & selected.ToString("yyyyMMdd") & ".xlsx")
                 Return
             Else
                 LoadValuesForDate(selected)
-                lblStatus.Text = $"Saved {result.Count} values for {selected:yyyy-MM-dd}."
+                lblStatus.Text = "Saved " & result.Count.ToString(CultureInfo.InvariantCulture) & " values for " & selected.ToString("yyyy-MM-dd") & "."
             End If
         Catch ex As Exception
             lblStatus.Text = "Save failed: " & ex.Message
@@ -212,7 +212,7 @@ Public Partial Class ManualEntry
     Private Sub PushDownload(bytes As Byte(), fileName As String)
         Response.Clear()
         Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        Response.AddHeader("Content-Disposition", $"attachment; filename=\"{fileName}\"")
+        Response.AddHeader("Content-Disposition", "attachment; filename=\"" & fileName & "\"")
         Response.BinaryWrite(bytes)
         Response.Flush()
         Context.ApplicationInstance.CompleteRequest()
