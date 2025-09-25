@@ -58,7 +58,11 @@
         .status{margin-top:12px; color:#2563EB; font-weight:600}
         .status.error{color:#B91C1C}
         .chip{background:var(--chip); color:var(--purple-d); padding:2px 10px; border-radius:999px; font-size:12px; display:inline-block}
-        .table-wrap{margin-top:16px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff}
+        .table-wrap{margin-top:16px; border:1px solid var(--line); border-radius:12px; background:#fff}
+        .table-scroll{max-height:560px; overflow-y:auto; overflow-x:hidden}
+        .table-scroll::-webkit-scrollbar{width:10px}
+        .table-scroll::-webkit-scrollbar-thumb{background:rgba(108,43,217,.3); border-radius:999px}
+        .table-scroll::-webkit-scrollbar-track{background:rgba(108,43,217,.08)}
         .grid{width:100%; border-collapse:separate; border-spacing:0}
         .grid thead th{
             position:sticky; top:0; z-index:5;
@@ -69,13 +73,6 @@
         .grid tbody tr:nth-child(even){background:#FCFAFF}
         .grid tbody tr:hover{background:#F5F3FF55}
         .grid .num{text-align:right}
-        .pager{ padding:10px; text-align:right; border-top:1px solid var(--line); }
-        .pager a, .pager span{
-            display:inline-block; margin-left:6px; padding:6px 10px; border-radius:6px; border:1px solid var(--line);
-            text-decoration:none; color:var(--ink); background:#fff;
-        }
-        .pager a:hover{ background:#F5F3FF; border-color:var(--purple); }
-        .pager span{ background:#6C2BD9; color:#fff; border-color:#6C2BD9; }
         .input-small{width:110px}
         .input-medium{width:140px}
         .input-wide{width:220px}
@@ -124,9 +121,8 @@
             </div>
 
             <div class="table-wrap">
-                <asp:GridView ID="gvManual" runat="server" AutoGenerateColumns="False" CssClass="grid" GridLines="None" AllowPaging="True" PageSize="40">
-                    <PagerSettings Mode="NumericFirstLast" Position="Bottom" PageButtonCount="10" FirstPageText="« First" LastPageText="Last »" NextPageText="›" PreviousPageText="‹" />
-                    <PagerStyle CssClass="pager" />
+                <div class="table-scroll">
+                    <asp:GridView ID="gvManual" runat="server" AutoGenerateColumns="False" CssClass="grid" GridLines="None" AllowPaging="False">
                     <Columns>
                         <asp:TemplateField HeaderText="Section">
                             <ItemTemplate>
@@ -164,7 +160,8 @@
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Columns>
-                </asp:GridView>
+                    </asp:GridView>
+                </div>
             </div>
         </div>
     </form>

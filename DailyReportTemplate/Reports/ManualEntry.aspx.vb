@@ -237,9 +237,4 @@ Public Class ManualEntry
         Throw New FormatException($"Value '{input}' is not a valid number.")
     End Function
 
-    Protected Sub gvManual_PageIndexChanging(sender As Object, e As GridViewPageEventArgs) Handles gvManual.PageIndexChanging
-        gvManual.PageIndex = e.NewPageIndex
-        BindGrid(SelectedDate())
-    End Sub
-
 End Class
