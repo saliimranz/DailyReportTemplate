@@ -9,9 +9,21 @@ Public Class DP
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
         If Not IsPostBack Then
-            ' Default to today
-            txtDate.Text = Date.Today.ToString("yyyy-MM-dd")
-            ddlMode.SelectedValue = "PLACEHOLDER"
+            Dim initialDate = Date.Today
+            Dim qsDate = Request.QueryString("date")
+            Dim parsedDate As Date
+            If Not String.IsNullOrWhiteSpace(qsDate) AndAlso Date.TryParse(qsDate, parsedDate) Then
+                initialDate = parsedDate
+            End If
+
+            txtDate.Text = initialDate.ToString("yyyy-MM-dd")
+
+            Dim manualMode = ddlMode.Items.FindByValue("PLACEHOLDER")
+            If manualMode IsNot Nothing Then
+                ddlMode.SelectedValue = "PLACEHOLDER"
+            ElseIf ddlMode.Items.Count > 0 Then
+                ddlMode.SelectedIndex = 0
+            End If
             BindGrid()
         End If
     End Sub
@@ -61,6 +73,11 @@ Public Class DP
         Catch ex As Exception
             lblInfo.Text = "Export (template) failed: " & ex.Message
         End Try
+    End Sub
+
+    Protected Sub btnAddManual_Click(sender As Object, e As EventArgs) Handles btnAddManual.Click
+        Dim d = SelectedDate()
+        Response.Redirect($"ManualEntry.aspx?date={d:yyyy-MM-dd}")
     End Sub
 
     Private Sub PushDownload(bytes As Byte(), fileName As String)

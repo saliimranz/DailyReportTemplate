@@ -136,6 +136,11 @@
         <asp:Button ID="btnRefresh" runat="server" CssClass="btn ghost" Text="Preview Report" />
     </div>
 
+    <div class="field" style="min-width:180px">
+        <label>&nbsp;</label>
+        <asp:Button ID="btnAddManual" runat="server" CssClass="btn" Text="Add Report Manually" />
+    </div>
+
     <div class="field" style="min-width:200px">
         <label>&nbsp;</label>
         <!-- Export button -->

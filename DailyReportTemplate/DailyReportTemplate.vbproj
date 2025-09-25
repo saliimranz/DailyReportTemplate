@@ -212,6 +212,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Reports\DP.aspx" />
+    <Content Include="Reports\ManualEntry.aspx" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.esm.js" />
@@ -281,6 +282,7 @@
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="BLF\ReportRepository.vb" />
+    <Compile Include="BLF\ReportFactUpdate.vb" />
     <Compile Include="BLF\TemplateExporter.vb" />
     <Compile Include="BLF\TemplateMap.vb" />
     <Compile Include="Contact.aspx.designer.vb">
@@ -324,6 +326,13 @@
     </Compile>
     <Compile Include="Reports\DP.aspx.vb">
       <DependentUpon>DP.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ManualEntry.aspx.designer.vb">
+      <DependentUpon>ManualEntry.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ManualEntry.aspx.vb">
+      <DependentUpon>ManualEntry.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="Site.Master.designer.vb">
