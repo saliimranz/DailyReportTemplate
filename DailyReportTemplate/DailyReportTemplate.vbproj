@@ -267,6 +267,7 @@
     <Content Include="Scripts\WebForms\WebForms.js" />
     <Content Include="Scripts\WebForms\WebParts.js" />
     <Content Include="Scripts\WebForms\WebUIValidation.js" />
+    <Content Include="Reports\ManualEntry.aspx" />
     <Content Include="Web.config" />
     <Content Include="Bundle.config" />
   </ItemGroup>
@@ -281,6 +282,7 @@
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="BLF\ReportRepository.vb" />
+    <Compile Include="BLF\DailyReportFieldCatalog.vb" />
     <Compile Include="BLF\TemplateExporter.vb" />
     <Compile Include="BLF\TemplateMap.vb" />
     <Compile Include="Contact.aspx.designer.vb">
@@ -324,6 +326,13 @@
     </Compile>
     <Compile Include="Reports\DP.aspx.vb">
       <DependentUpon>DP.aspx</DependentUpon>
+      <SubType>ASPXCodebehind</SubType>
+    </Compile>
+    <Compile Include="Reports\ManualEntry.aspx.designer.vb">
+      <DependentUpon>ManualEntry.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Reports\ManualEntry.aspx.vb">
+      <DependentUpon>ManualEntry.aspx</DependentUpon>
       <SubType>ASPXCodebehind</SubType>
     </Compile>
     <Compile Include="Site.Master.designer.vb">
