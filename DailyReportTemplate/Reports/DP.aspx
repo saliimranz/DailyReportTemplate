@@ -115,7 +115,8 @@
 <div class="toolbar">
     <div class="field">
         <label for="txtDate">Report Date</label>
-        <asp:TextBox ID="txtDate" runat="server" CssClass="text" TextMode="Date" />
+        <asp:TextBox ID="txtDate" runat="server" CssClass="text" TextMode="Date"
+            AutoPostBack="true" OnTextChanged="txtDate_TextChanged" />
         <asp:RequiredFieldValidator ID="rfvDate" runat="server" ControlToValidate="txtDate"
             ErrorMessage="*" CssClass="val" Display="Dynamic" />
     </div>

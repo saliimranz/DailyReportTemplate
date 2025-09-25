@@ -47,6 +47,10 @@ Public Class DP
         BindGrid()
     End Sub
 
+    Protected Sub txtDate_TextChanged(sender As Object, e As EventArgs) Handles txtDate.TextChanged
+        BindGrid()
+    End Sub
+
     Protected Sub btnExportTemplate_Click(sender As Object, e As EventArgs) Handles btnExportExcel.Click
         Try
             Dim d = SelectedDate()
