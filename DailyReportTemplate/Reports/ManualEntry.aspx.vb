@@ -38,44 +38,57 @@ Public Class ManualEntry
 
     Private Sub BindGrid(reportDate As Date)
         Try
-            Dim dt = repo.GetFacts(reportDate)
-            Dim isTemplate As Boolean = False
-            If dt.Rows.Count = 0 Then
-                dt = repo.GetTemplateFacts(reportDate)
-                isTemplate = dt.Rows.Count > 0
+            Dim existing = repo.GetFacts(reportDate)
+            Dim template = repo.GetTemplateFacts(reportDate)
+
+            Dim dt As DataTable = Nothing
+            Dim usedTemplate As Boolean = False
+
+            If template IsNot Nothing AndAlso template.Rows.Count > 0 Then
+                dt = template
+                If existing IsNot Nothing AndAlso existing.Rows.Count > 0 Then
+                    MergeExistingValues(dt, existing)
+                End If
+                usedTemplate = True
+            Else
+                dt = existing
             End If
 
             EnsureKeyColumns(dt)
 
-            If Not dt.Columns.Contains("ValueNumDisplay") Then
-                dt.Columns.Add("ValueNumDisplay", GetType(String))
-            End If
-            If Not dt.Columns.Contains("Oracle_C1_Display") Then
-                dt.Columns.Add("Oracle_C1_Display", GetType(String))
-            End If
-            If Not dt.Columns.Contains("Oracle_C2_Display") Then
-                dt.Columns.Add("Oracle_C2_Display", GetType(String))
-            End If
+            If dt IsNot Nothing Then
+                If Not dt.Columns.Contains("ValueNumDisplay") Then
+                    dt.Columns.Add("ValueNumDisplay", GetType(String))
+                End If
+                If Not dt.Columns.Contains("Oracle_C1_Display") Then
+                    dt.Columns.Add("Oracle_C1_Display", GetType(String))
+                End If
+                If Not dt.Columns.Contains("Oracle_C2_Display") Then
+                    dt.Columns.Add("Oracle_C2_Display", GetType(String))
+                End If
 
-            For Each row As DataRow In dt.Rows
-                NormalizePickupRow(row)
-                row("ValueNumDisplay") = FormatNullableDecimal(row, "ValueNum")
-                row("Oracle_C1_Display") = FormatNullableDecimal(row, "Oracle_C1")
-                row("Oracle_C2_Display") = FormatNullableDecimal(row, "Oracle_C2")
-            Next
+                For Each row As DataRow In dt.Rows
+                    NormalizePickupRow(row)
+                    row("ValueNumDisplay") = FormatNullableDecimal(row, "ValueNum")
+                    row("Oracle_C1_Display") = FormatNullableDecimal(row, "Oracle_C1")
+                    row("Oracle_C2_Display") = FormatNullableDecimal(row, "Oracle_C2")
+                Next
+            End If
 
             gvManual.DataSource = dt
             gvManual.DataBind()
 
-            If dt.Rows.Count = 0 Then
+            If dt Is Nothing OrElse dt.Rows.Count = 0 Then
                 lblInfo.CssClass = "status error"
                 lblInfo.Text = $"No template rows were found for {reportDate:yyyy-MM-dd}."
             Else
                 lblInfo.CssClass = "status"
-                If isTemplate Then
+                If existing IsNot Nothing AndAlso existing.Rows.Count > 0 Then
+                    lblInfo.Text = $"Editing {dt.Rows.Count:n0} fields for {reportDate:yyyy-MM-dd}. {existing.Rows.Count:n0} rows already saved."
+                ElseIf usedTemplate Then
                     lblInfo.Text = $"Loaded template for {reportDate:yyyy-MM-dd}. Enter values and click Save."
                 Else
-                    lblInfo.Text = $"Editing {dt.Rows.Count:n0} fields for {reportDate:yyyy-MM-dd}."
+                    lblInfo.Text = $"Loaded {dt.Rows.Count:n0} fields for {reportDate:yyyy-MM-dd}."
                 End If
             End If
         Catch ex As Exception
@@ -95,6 +108,8 @@ Public Class ManualEntry
     End Function
 
     Private Shared Sub EnsureKeyColumns(table As DataTable)
+        If table Is Nothing Then Return
+
         Dim required = New String() {"SectionKey", "SubSectionKey", "ItemKey", "MeasureGroupKey", "MeasureNameKey"}
 
         For Each name In required
@@ -111,6 +126,64 @@ Public Class ManualEntry
             row("MeasureNameKey") = row("MeasureName").ToString()
         Next
     End Sub
+
+    Private Shared Sub MergeExistingValues(template As DataTable, existing As DataTable)
+        If template Is Nothing OrElse existing Is Nothing Then Return
+
+        Dim lookup As New Dictionary(Of String, DataRow)(StringComparer.OrdinalIgnoreCase)
+
+        For Each existingRow As DataRow In existing.Rows
+            Dim key = BuildRowKey(existingRow)
+            If Not lookup.ContainsKey(key) Then
+                lookup.Add(key, existingRow)
+            End If
+        Next
+
+        For Each templateRow As DataRow In template.Rows
+            Dim key = BuildRowKey(templateRow)
+            Dim match As DataRow = Nothing
+            If lookup.TryGetValue(key, match) Then
+                CopyColumnIfExists(templateRow, match, "ValueNum")
+                CopyColumnIfExists(templateRow, match, "ValueText")
+                CopyColumnIfExists(templateRow, match, "Remarks")
+                CopyColumnIfExists(templateRow, match, "Oracle_C1")
+                CopyColumnIfExists(templateRow, match, "Oracle_C2")
+                CopyColumnIfExists(templateRow, match, "Unit")
+                CopyColumnIfExists(templateRow, match, "SortSection")
+                CopyColumnIfExists(templateRow, match, "SortSubSection")
+                CopyColumnIfExists(templateRow, match, "SortItem")
+                CopyColumnIfExists(templateRow, match, "SortMeasure")
+            End If
+        Next
+    End Sub
+
+    Private Shared Sub CopyColumnIfExists(target As DataRow, source As DataRow, columnName As String)
+        If target Is Nothing OrElse source Is Nothing Then Return
+        If target.Table.Columns.Contains(columnName) AndAlso source.Table.Columns.Contains(columnName) Then
+            target(columnName) = source(columnName)
+        End If
+    End Sub
+
+    Private Shared Function BuildRowKey(row As DataRow) As String
+        If row Is Nothing Then Return String.Empty
+
+        Dim parts = New String() {
+            SafeDataRowString(row, "Section"),
+            SafeDataRowString(row, "SubSection"),
+            SafeDataRowString(row, "Item"),
+            SafeDataRowString(row, "MeasureGroup"),
+            SafeDataRowString(row, "MeasureName")
+        }
+
+        Return String.Join("|", parts)
+    End Function
+
+    Private Shared Function SafeDataRowString(row As DataRow, columnName As String) As String
+        If row.Table.Columns.Contains(columnName) AndAlso Not row.IsNull(columnName) Then
+            Return row(columnName).ToString()
+        End If
+        Return String.Empty
+    End Function
 
     Private Shared Sub NormalizePickupRow(row As DataRow)
         If row Is Nothing Then Return
@@ -163,6 +236,12 @@ Public Class ManualEntry
                 Dim item = GetHiddenValue(row, "hfItem")
                 Dim measureGroup = GetHiddenValue(row, "hfMeasureGroup")
                 Dim measureName = GetHiddenValue(row, "hfMeasureName")
+                Dim unit = GetHiddenValue(row, "hfUnit")
+                Dim sortSection = ParseNullableInt(row, "hfSortSection")
+                Dim sortSubSection = ParseNullableInt(row, "hfSortSubSection")
+                Dim sortItem = ParseNullableInt(row, "hfSortItem")
+                Dim sortMeasure = ParseNullableInt(row, "hfSortMeasure")
+                Dim valueText = GetHiddenValue(row, "hfValueText")
 
                 Dim valueNum = ParseNullableDecimal(TryCast(row.FindControl("txtValueNum"), TextBox))
                 Dim remarks = GetTextValue(row, "txtRemarks")
@@ -177,9 +256,15 @@ Public Class ManualEntry
                     .MeasureGroup = measureGroup,
                     .MeasureName = measureName,
                     .ValueNum = valueNum,
-                    .Remarks = If(String.IsNullOrWhiteSpace(remarks), Nothing, remarks.Trim()),
+                    .ValueText = NullIfWhiteSpace(valueText),
+                    .Remarks = NullIfWhiteSpace(remarks),
                     .OracleC1 = oracleC1,
-                    .OracleC2 = oracleC2
+                    .OracleC2 = oracleC2,
+                    .Unit = NullIfWhiteSpace(unit),
+                    .SortSection = sortSection,
+                    .SortSubSection = sortSubSection,
+                    .SortItem = sortItem,
+                    .SortMeasure = sortMeasure
                 }
 
                 updates.Add(updateRow)
@@ -220,6 +305,18 @@ Public Class ManualEntry
         Return String.Empty
     End Function
 
+    Private Shared Function ParseNullableInt(row As GridViewRow, controlId As String) As Integer?
+        Dim raw = GetHiddenValue(row, controlId)
+        If String.IsNullOrWhiteSpace(raw) Then Return Nothing
+
+        Dim value As Integer
+        If Integer.TryParse(raw, value) Then
+            Return value
+        End If
+
+        Return Nothing
+    End Function
+
     Private Shared Function ParseNullableDecimal(ctrl As TextBox) As Decimal?
         If ctrl Is Nothing Then Return Nothing
         Dim input = ctrl.Text
@@ -235,6 +332,11 @@ Public Class ManualEntry
         End If
 
         Throw New FormatException($"Value '{input}' is not a valid number.")
+    End Function
+
+    Private Shared Function NullIfWhiteSpace(value As String) As String
+        If String.IsNullOrWhiteSpace(value) Then Return Nothing
+        Return value.Trim()
     End Function
 
 End Class

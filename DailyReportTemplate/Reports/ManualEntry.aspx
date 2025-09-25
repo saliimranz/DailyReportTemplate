@@ -133,6 +133,12 @@
                                 <asp:HiddenField ID="hfItem" runat="server" Value='<%# Eval("ItemKey") %>' />
                                 <asp:HiddenField ID="hfMeasureGroup" runat="server" Value='<%# Eval("MeasureGroupKey") %>' />
                                 <asp:HiddenField ID="hfMeasureName" runat="server" Value='<%# Eval("MeasureNameKey") %>' />
+                                <asp:HiddenField ID="hfUnit" runat="server" Value='<%# Eval("Unit") %>' />
+                                <asp:HiddenField ID="hfSortSection" runat="server" Value='<%# Eval("SortSection") %>' />
+                                <asp:HiddenField ID="hfSortSubSection" runat="server" Value='<%# Eval("SortSubSection") %>' />
+                                <asp:HiddenField ID="hfSortItem" runat="server" Value='<%# Eval("SortItem") %>' />
+                                <asp:HiddenField ID="hfSortMeasure" runat="server" Value='<%# Eval("SortMeasure") %>' />
+                                <asp:HiddenField ID="hfValueText" runat="server" Value='<%# Eval("ValueText") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="Item" HeaderText="Item" />

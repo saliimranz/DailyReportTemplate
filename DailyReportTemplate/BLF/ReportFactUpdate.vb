@@ -11,5 +11,10 @@ Namespace DailyReport.BLF
         Public Property Remarks As String
         Public Property OracleC1 As Decimal?
         Public Property OracleC2 As Decimal?
+        Public Property Unit As String
+        Public Property SortSection As Integer?
+        Public Property SortSubSection As Integer?
+        Public Property SortItem As Integer?
+        Public Property SortMeasure As Integer?
     End Class
 End Namespace
