@@ -1,6 +1,6 @@
 Imports System.Collections.Generic
 
-Namespace DailyReportTemplate.BLF
+Namespace BLF
 
     Public Class DailyReportFieldDefinition
         Public Property Section As String

@@ -3,8 +3,9 @@ Imports System.Globalization
 Imports System.Linq
 Imports DailyReportTemplate.BLF
 Imports DailyReportTemplate.DailyReport.BLF
+Imports System.Web.UI.WebControls
 
-Public Class ManualEntry
+Public Partial Class ManualEntry
     Inherits System.Web.UI.Page
 
     Private ReadOnly repo As New ReportRepository()
@@ -104,7 +105,12 @@ Public Class ManualEntry
         If values Is Nothing Then Return
 
         For Each field In fieldDefs
-            Dim key = Tuple.Create(field.Section, field.SubSection, field.Item, field.MeasureGroup, field.MeasureName)
+            Dim key As Tuple(Of String, String, String, String, String) = Tuple.Create(
+                field.Section,
+                If(field.SubSection, String.Empty),
+                If(field.Item, String.Empty),
+                field.MeasureGroup,
+                field.MeasureName)
             Dim dto As DailyReportFactValue = Nothing
             If values.TryGetValue(key, dto) AndAlso dto IsNot Nothing Then
                 Dim tb = inputControls(field.Key)
