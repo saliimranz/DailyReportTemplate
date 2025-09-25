@@ -45,6 +45,8 @@ Public Class ManualEntry
                 isTemplate = dt.Rows.Count > 0
             End If
 
+            EnsureKeyColumns(dt)
+
             If Not dt.Columns.Contains("ValueNumDisplay") Then
                 dt.Columns.Add("ValueNumDisplay", GetType(String))
             End If
@@ -56,6 +58,7 @@ Public Class ManualEntry
             End If
 
             For Each row As DataRow In dt.Rows
+                NormalizePickupRow(row)
                 row("ValueNumDisplay") = FormatNullableDecimal(row, "ValueNum")
                 row("Oracle_C1_Display") = FormatNullableDecimal(row, "Oracle_C1")
                 row("Oracle_C2_Display") = FormatNullableDecimal(row, "Oracle_C2")
@@ -91,6 +94,58 @@ Public Class ManualEntry
         Return String.Empty
     End Function
 
+    Private Shared Sub EnsureKeyColumns(table As DataTable)
+        Dim required = New String() {"SectionKey", "SubSectionKey", "ItemKey", "MeasureGroupKey", "MeasureNameKey"}
+
+        For Each name In required
+            If Not table.Columns.Contains(name) Then
+                table.Columns.Add(name, GetType(String))
+            End If
+        Next
+
+        For Each row As DataRow In table.Rows
+            row("SectionKey") = row("Section").ToString()
+            row("SubSectionKey") = row("SubSection").ToString()
+            row("ItemKey") = row("Item").ToString()
+            row("MeasureGroupKey") = row("MeasureGroup").ToString()
+            row("MeasureNameKey") = row("MeasureName").ToString()
+        Next
+    End Sub
+
+    Private Shared Sub NormalizePickupRow(row As DataRow)
+        If row Is Nothing Then Return
+
+        Dim itemValue = row("Item").ToString()
+        If Not String.Equals(itemValue, "01TonPickup", StringComparison.OrdinalIgnoreCase) Then
+            Return
+        End If
+
+        row("Item") = "01Ton Pickup"
+
+        If row.Table.Columns.Contains("SubSection") Then
+            row("SubSection") = "Pickup Loading"
+        End If
+
+        Dim measureGroup = row("MeasureGroup").ToString()
+        Dim measureName = row("MeasureName").ToString()
+
+        Dim preferred As String = Nothing
+        If Not String.IsNullOrWhiteSpace(measureGroup) Then
+            preferred = measureGroup
+        ElseIf Not String.IsNullOrWhiteSpace(measureName) Then
+            preferred = measureName
+        End If
+
+        If String.IsNullOrWhiteSpace(preferred) Then
+            preferred = measureName
+        End If
+
+        If Not String.IsNullOrWhiteSpace(preferred) Then
+            row("MeasureGroup") = preferred
+            row("MeasureName") = preferred
+        End If
+    End Sub
+
     Protected Sub btnLoad_Click(sender As Object, e As EventArgs) Handles btnLoad.Click
         BindGrid(SelectedDate())
     End Sub
@@ -110,7 +165,6 @@ Public Class ManualEntry
                 Dim measureName = GetHiddenValue(row, "hfMeasureName")
 
                 Dim valueNum = ParseNullableDecimal(TryCast(row.FindControl("txtValueNum"), TextBox))
-                Dim valueText = GetTextValue(row, "txtValueText")
                 Dim remarks = GetTextValue(row, "txtRemarks")
                 Dim oracleC1 = ParseNullableDecimal(TryCast(row.FindControl("txtOracleC1"), TextBox))
                 Dim oracleC2 = ParseNullableDecimal(TryCast(row.FindControl("txtOracleC2"), TextBox))
@@ -123,7 +177,6 @@ Public Class ManualEntry
                     .MeasureGroup = measureGroup,
                     .MeasureName = measureName,
                     .ValueNum = valueNum,
-                    .ValueText = If(String.IsNullOrWhiteSpace(valueText), Nothing, valueText.Trim()),
                     .Remarks = If(String.IsNullOrWhiteSpace(remarks), Nothing, remarks.Trim()),
                     .OracleC1 = oracleC1,
                     .OracleC2 = oracleC2

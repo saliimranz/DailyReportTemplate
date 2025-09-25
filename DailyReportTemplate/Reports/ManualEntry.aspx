@@ -132,11 +132,11 @@
                             <ItemTemplate>
                                 <span class="section-label"><%# Eval("Section") %></span><br />
                                 <span class="subsection-label"><%# Eval("SubSection") %></span>
-                                <asp:HiddenField ID="hfSection" runat="server" Value='<%# Eval("Section") %>' />
-                                <asp:HiddenField ID="hfSubSection" runat="server" Value='<%# Eval("SubSection") %>' />
-                                <asp:HiddenField ID="hfItem" runat="server" Value='<%# Eval("Item") %>' />
-                                <asp:HiddenField ID="hfMeasureGroup" runat="server" Value='<%# Eval("MeasureGroup") %>' />
-                                <asp:HiddenField ID="hfMeasureName" runat="server" Value='<%# Eval("MeasureName") %>' />
+                                <asp:HiddenField ID="hfSection" runat="server" Value='<%# Eval("SectionKey") %>' />
+                                <asp:HiddenField ID="hfSubSection" runat="server" Value='<%# Eval("SubSectionKey") %>' />
+                                <asp:HiddenField ID="hfItem" runat="server" Value='<%# Eval("ItemKey") %>' />
+                                <asp:HiddenField ID="hfMeasureGroup" runat="server" Value='<%# Eval("MeasureGroupKey") %>' />
+                                <asp:HiddenField ID="hfMeasureName" runat="server" Value='<%# Eval("MeasureNameKey") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:BoundField DataField="Item" HeaderText="Item" />
@@ -146,11 +146,6 @@
                         <asp:TemplateField HeaderText="Value (Number)">
                             <ItemTemplate>
                                 <asp:TextBox ID="txtValueNum" runat="server" CssClass="text input-small" Text='<%# Eval("ValueNumDisplay") %>' />
-                            </ItemTemplate>
-                        </asp:TemplateField>
-                        <asp:TemplateField HeaderText="Value (Text)">
-                            <ItemTemplate>
-                                <asp:TextBox ID="txtValueText" runat="server" CssClass="text input-wide" Text='<%# Eval("ValueText") %>' />
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Remarks">
