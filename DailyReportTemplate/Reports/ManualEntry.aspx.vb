@@ -39,9 +39,10 @@ Public Class ManualEntry
     Private Sub BindGrid(reportDate As Date)
         Try
             Dim dt = repo.GetFacts(reportDate)
+            Dim isTemplate As Boolean = False
             If dt.Rows.Count = 0 Then
-                repo.BuildDailyReport(reportDate, "PLACEHOLDER")
-                dt = repo.GetFacts(reportDate)
+                dt = repo.GetTemplateFacts(reportDate)
+                isTemplate = dt.Rows.Count > 0
             End If
 
             If Not dt.Columns.Contains("ValueNumDisplay") Then
@@ -68,7 +69,11 @@ Public Class ManualEntry
                 lblInfo.Text = $"No template rows were found for {reportDate:yyyy-MM-dd}."
             Else
                 lblInfo.CssClass = "status"
-                lblInfo.Text = $"Editing {dt.Rows.Count:n0} fields for {reportDate:yyyy-MM-dd}."
+                If isTemplate Then
+                    lblInfo.Text = $"Loaded template for {reportDate:yyyy-MM-dd}. Enter values and click Save."
+                Else
+                    lblInfo.Text = $"Editing {dt.Rows.Count:n0} fields for {reportDate:yyyy-MM-dd}."
+                End If
             End If
         Catch ex As Exception
             lblInfo.CssClass = "status error"
