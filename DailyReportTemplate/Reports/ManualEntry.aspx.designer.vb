@@ -24,9 +24,9 @@ Partial Public Class ManualEntry
     Protected WithEvents txtDate As Global.System.Web.UI.WebControls.TextBox
 
     '''<summary>
-    '''btnLoadPrevious control.
+    '''btnReload control.
     '''</summary>
-    Protected WithEvents btnLoadPrevious As Global.System.Web.UI.WebControls.Button
+    Protected WithEvents btnReload As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
     '''btnSave control.

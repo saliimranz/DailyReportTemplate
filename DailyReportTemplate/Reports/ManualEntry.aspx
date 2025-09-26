@@ -89,11 +89,12 @@
             <div class="toolbar">
                 <div class="field">
                     <label for="txtDate">Report Date</label>
-                    <asp:TextBox ID="txtDate" runat="server" CssClass="text" TextMode="Date" />
+                    <asp:TextBox ID="txtDate" runat="server" CssClass="text" TextMode="Date"
+                        AutoPostBack="true" OnTextChanged="txtDate_TextChanged" />
                 </div>
                 <div class="field" style="min-width:150px">
                     <label>&nbsp;</label>
-                    <asp:Button ID="btnLoadPrevious" runat="server" CssClass="btn ghost" Text="Load Previous Day" />
+                    <asp:Button ID="btnReload" runat="server" CssClass="btn ghost" Text="Reload Form" />
                 </div>
                 <div class="spacer"></div>
                 <div class="field" style="min-width:160px">

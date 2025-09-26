@@ -140,7 +140,7 @@
 
     <div class="field" style="min-width:160px">
         <label>&nbsp;</label>
-        <a class="btn" href="ManualEntry.aspx">Manual Entry</a>
+        <asp:HyperLink ID="lnkManualEntry" runat="server" CssClass="btn" Text="Manual Entry" />
     </div>
 
     <div class="field" style="min-width:200px">

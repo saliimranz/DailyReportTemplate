@@ -27,6 +27,7 @@ Public Class DP
 
     Private Sub BindGrid()
         Dim d = SelectedDate()
+        UpdateManualEntryLink(d)
         Dim dt = repo.GetFacts(d)
         gv.DataSource = dt
         gv.DataBind()
@@ -35,6 +36,12 @@ Public Class DP
             lblInfo.Text = $"No data for {d:yyyy-MM-dd}. Build it first."
         Else
             lblInfo.Text = $"Loaded {dt.Rows.Count:n0} rows for {d:yyyy-MM-dd}."
+        End If
+    End Sub
+
+    Private Sub UpdateManualEntryLink(reportDate As Date)
+        If lnkManualEntry IsNot Nothing Then
+            lnkManualEntry.NavigateUrl = $"ManualEntry.aspx?date={reportDate:yyyy-MM-dd}"
         End If
     End Sub
 

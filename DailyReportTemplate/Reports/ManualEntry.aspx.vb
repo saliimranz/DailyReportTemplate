@@ -20,10 +20,21 @@ Partial Public Class ManualEntry
 
     Protected Sub Page_Load(ByVal sender As Object, ByVal e As EventArgs) Handles Me.Load
         If Not IsPostBack Then
-            txtDate.Text = Date.Today.ToString("yyyy-MM-dd")
-            LoadValuesForDate(SelectedDate())
+            Dim requested = RequestedDateFromQuery()
+            Dim initial = If(requested.HasValue, requested.Value, Date.Today)
+            txtDate.Text = initial.ToString("yyyy-MM-dd")
+            LoadValuesForDate(initial)
         End If
     End Sub
+
+    Private Function RequestedDateFromQuery() As Nullable(Of Date)
+        Dim raw = Request.QueryString("date")
+        Dim parsed As Date
+        If Not String.IsNullOrWhiteSpace(raw) AndAlso Date.TryParse(raw, parsed) Then
+            Return parsed
+        End If
+        Return Nothing
+    End Function
 
     Private Function SelectedDate() As Date
         Dim d As Date
@@ -127,15 +138,12 @@ Partial Public Class ManualEntry
         Next
     End Sub
 
-    Protected Sub btnLoadPrevious_Click(sender As Object, e As EventArgs) Handles btnLoadPrevious.Click
-        Dim prev = SelectedDate().AddDays(-1)
-        Dim dict = repo.GetFactsAsDictionary(prev)
-        ApplyValues(dict)
-        If dict.Count = 0 Then
-            lblStatus.Text = "No saved values for " & prev.ToString("yyyy-MM-dd") & "."
-        Else
-            lblStatus.Text = "Loaded " & dict.Count.ToString(CultureInfo.InvariantCulture) & " values from " & prev.ToString("yyyy-MM-dd") & ". Click Save to persist for " & SelectedDate().ToString("yyyy-MM-dd") & "."
-        End If
+    Protected Sub txtDate_TextChanged(sender As Object, e As EventArgs) Handles txtDate.TextChanged
+        LoadValuesForDate(SelectedDate())
+    End Sub
+
+    Protected Sub btnReload_Click(sender As Object, e As EventArgs) Handles btnReload.Click
+        LoadValuesForDate(SelectedDate())
     End Sub
 
     Protected Sub btnSave_Click(sender As Object, e As EventArgs) Handles btnSave.Click
