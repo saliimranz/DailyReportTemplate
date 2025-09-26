@@ -117,26 +117,26 @@ Namespace DailyReport.BLF
                         insCmd.Parameters.Add("@SortItem", SqlDbType.Int)
                         insCmd.Parameters.Add("@SortMeasure", SqlDbType.Int)
 
-                        For Each val In values
-                            If val Is Nothing Then Continue For
+                        For Each v In values
+                            If v Is Nothing Then Continue For
                             insCmd.Parameters("@ReportDate").Value = reportDate
-                            insCmd.Parameters("@Section").Value = val.Section
-                            insCmd.Parameters("@SubSection").Value = val.SubSection
-                            insCmd.Parameters("@Item").Value = val.Item
-                            insCmd.Parameters("@MeasureGroup").Value = val.MeasureGroup
-                            insCmd.Parameters("@MeasureName").Value = val.MeasureName
-                            If val.ValueNum.HasValue Then
-                                insCmd.Parameters("@ValueNum").Value = val.ValueNum.Value
+                            insCmd.Parameters("@Section").Value = v.Section
+                            insCmd.Parameters("@SubSection").Value = v.SubSection
+                            insCmd.Parameters("@Item").Value = v.Item
+                            insCmd.Parameters("@MeasureGroup").Value = v.MeasureGroup
+                            insCmd.Parameters("@MeasureName").Value = v.MeasureName
+                            If v.ValueNum.HasValue Then
+                                insCmd.Parameters("@ValueNum").Value = v.ValueNum.Value
                                 insCmd.Parameters("@ValueText").Value = DBNull.Value
                             Else
                                 insCmd.Parameters("@ValueNum").Value = DBNull.Value
-                                insCmd.Parameters("@ValueText").Value = If(String.IsNullOrWhiteSpace(val.ValueText), CType(DBNull.Value, Object), val.ValueText)
+                                insCmd.Parameters("@ValueText").Value = If(String.IsNullOrWhiteSpace(v.ValueText), CType(DBNull.Value, Object), v.ValueText)
                             End If
-                            insCmd.Parameters("@Unit").Value = If(String.IsNullOrWhiteSpace(val.Unit), CType(DBNull.Value, Object), val.Unit)
-                            insCmd.Parameters("@SortSection").Value = val.SortSection
-                            insCmd.Parameters("@SortSubSection").Value = val.SortSubSection
-                            insCmd.Parameters("@SortItem").Value = val.SortItem
-                            insCmd.Parameters("@SortMeasure").Value = val.SortMeasure
+                            insCmd.Parameters("@Unit").Value = If(String.IsNullOrWhiteSpace(v.Unit), CType(DBNull.Value, Object), v.Unit)
+                            insCmd.Parameters("@SortSection").Value = v.SortSection
+                            insCmd.Parameters("@SortSubSection").Value = v.SortSubSection
+                            insCmd.Parameters("@SortItem").Value = v.SortItem
+                            insCmd.Parameters("@SortMeasure").Value = v.SortMeasure
                             insCmd.ExecuteNonQuery()
                         Next
                     End Using

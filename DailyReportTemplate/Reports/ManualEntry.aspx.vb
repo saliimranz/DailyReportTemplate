@@ -5,7 +5,7 @@ Imports DailyReportTemplate.BLF
 Imports DailyReportTemplate.DailyReport.BLF
 Imports System.Web.UI.WebControls
 
-Public Partial Class ManualEntry
+Partial Public Class ManualEntry
     Inherits System.Web.UI.Page
 
     Private ReadOnly repo As New ReportRepository()
@@ -212,7 +212,7 @@ Public Partial Class ManualEntry
     Private Sub PushDownload(bytes As Byte(), fileName As String)
         Response.Clear()
         Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        Response.AddHeader("Content-Disposition", "attachment; filename=\"" & fileName & "\"")
+        Response.AddHeader("Content-Disposition", "attachment; filename=\"" & fileName & " \ "")
         Response.BinaryWrite(bytes)
         Response.Flush()
         Context.ApplicationInstance.CompleteRequest()
