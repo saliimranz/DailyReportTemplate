@@ -68,6 +68,15 @@ Partial Public Class DP
     Protected WithEvents btnRefresh As Global.System.Web.UI.WebControls.Button
 
     '''<summary>
+    '''lnkManualEntry control.
+    '''</summary>
+    '''<remarks>
+    '''Auto-generated field.
+    '''To modify move field declaration from designer file to code-behind file.
+    '''</remarks>
+    Protected WithEvents lnkManualEntry As Global.System.Web.UI.WebControls.HyperLink
+
+    '''<summary>
     '''btnExportExcel control.
     '''</summary>
     '''<remarks>
