@@ -55,6 +55,7 @@
         .btn{
             height:36px; padding:0 14px; border-radius:8px; border:1px solid transparent;
             background:#f8f8ff; color:var(--purple); cursor:pointer; font-weight:600;
+            display:inline-flex; align-items:center; justify-content:center; text-decoration:none;
         }
         .btn:hover{background:#f1edff}
         .btn.primary{background:var(--purple); color:#fff}
@@ -135,6 +136,11 @@
         <label>&nbsp;</label>
         <!-- Keep this as your “build/preview” action -->
         <asp:Button ID="btnRefresh" runat="server" CssClass="btn ghost" Text="Preview Report" />
+    </div>
+
+    <div class="field" style="min-width:160px">
+        <label>&nbsp;</label>
+        <asp:HyperLink ID="lnkManualEntry" runat="server" CssClass="btn" Text="Manual Entry" NavigateUrl="ManualEntry.aspx" />
     </div>
 
     <div class="field" style="min-width:200px">

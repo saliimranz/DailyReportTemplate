@@ -14,6 +14,8 @@ Public Class DP
             ddlMode.SelectedValue = "PLACEHOLDER"
             BindGrid()
         End If
+
+        lnkManualEntry.NavigateUrl = "ManualEntry.aspx?date=" & SelectedDate().ToString("yyyy-MM-dd")
     End Sub
 
     Private Function SelectedDate() As Date
